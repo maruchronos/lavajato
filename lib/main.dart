@@ -26,7 +26,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var results = [];
 
-  _getIPAddress() async {
+  _loadPoliticians() async {
     var url = 'https://raw.githubusercontent.com/HackersAtivistas/lavajato/master/lista_lavajato.json';
     var httpClient = new HttpClient();
 
@@ -65,14 +65,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    _getIPAddress();
+    _loadPoliticians();
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Lava Jato')
       ),
       body: new Center(
         child: new GridView.count(
-            childAspectRatio: .6,
+            childAspectRatio: .4,
             primary: false,
             padding: new EdgeInsets.all(8.0),
             crossAxisSpacing: 10.0,
