@@ -4,5 +4,4 @@ A new Flutter project.
 
 ## Getting Started
 
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+Para os dados exibidos no projeto utilizamos a base disponível em: https://raw.githubusercontent.com/HackersAtivistas/lavajato/master/lista_lavajato.json
