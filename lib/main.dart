@@ -1,6 +1,5 @@
-// Copyright 2017 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -12,90 +11,76 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Flutter Demo',
-      theme: new ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: new MyHomePage(title: 'Flutter Demo Home Page'),
+      home: new MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text(widget.title),
-        ),
-        body: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _politicianCards()));
+  var results = [];
+
+  _getIPAddress() async {
+    var url = 'https://raw.githubusercontent.com/HackersAtivistas/lavajato/master/lista_lavajato.json';
+    var httpClient = new HttpClient();
+
+    List<dynamic> resultData;
+    try {
+      var request = await httpClient.getUrl(Uri.parse(url));
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var jsonString = await response.transform(utf8.decoder).join();
+        resultData = json.decode(jsonString);
+      }
+    } catch (exception) {
+    }
+
+    // If the widget was removed from the tree while the message was in flight,
+    // we want to discard the reply rather than calling setState to update our
+    // non-existent appearance.
+    if (!mounted) return;
+    setState(() {
+      results = resultData;
+    });
   }
 
-  _politicianCards() {
-    return [
-      new Column(
-        children: [
-          new Image.network(
-              'http://www.camara.leg.br/internet/deputado/bandep/160553.jpg'),
-          new Text(
-            'ANTONIO BRITO',
-            style: new TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w800,
-              fontFamily: 'Roboto',
-              letterSpacing: 0.5,
-              fontSize: 16.0,
-            ),
-          ),
-          new Text(
-            'PSD/BA',
-            style: new TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w800,
-              fontFamily: 'Roboto',
-              letterSpacing: 0.5,
-              fontSize: 18.0,
-            ),
-          ),
-        ],
+  List<Column> buildCards (List<dynamic> arr) {
+    List<Column> out = arr.map((el) {
+      return new Column(
+          children: <Widget>[
+              new Image.network(el['foto']),
+              new Text(el['nome']),
+            ],
+          );
+        }
+      ).toList();
+    return out;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _getIPAddress();
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Lava Jato')
       ),
-      new Column(
-        children: [
-          new Image.network(
-              'http://www.camara.leg.br/internet/deputado/bandep/160600.jpg'),
-          new Text(
-            'ARTHUR OLIVEIRA MAIA',
-            style: new TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w800,
-              fontFamily: 'Roboto',
-              letterSpacing: 0.5,
-              fontSize: 16.0,
-            ),
+      body: new Center(
+        child: new GridView.count(
+            childAspectRatio: .6,
+            primary: false,
+            padding: new EdgeInsets.all(8.0),
+            crossAxisSpacing: 10.0,
+            // mainAxisSpacing: 40.0,
+            crossAxisCount: 3,
+            children: buildCards(this.results)
           ),
-          new Text(
-            'PPS/BA',
-            style: new TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w800,
-              fontFamily: 'Roboto',
-              letterSpacing: 0.5,
-              fontSize: 18.0,
-            ),
-          ),
-        ],
-      ),
-    ];
+        ),
+      );
   }
 }
