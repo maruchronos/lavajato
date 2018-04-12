@@ -10,10 +10,30 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new MyHomePage(),
-    );
+    return MaterialApp(routes: <String, WidgetBuilder>{
+      '/home': (BuildContext context) => MyHomePage(),
+      '/details': (BuildContext context) => DetailsPage()
+    });
   }
+}
+
+class DetailsPage extends StatefulWidget {
+  DetailsPage({Key key}) : super(key: key);
+
+  @override
+  _DetailsPageState createState() => new _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(title: Text('Detalhes')),
+        body: Center(
+          child: Text('Detalhes')
+        ),
+      );
+    }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -27,7 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
   var results = [];
 
   _loadPoliticians() async {
-    var url = 'https://raw.githubusercontent.com/HackersAtivistas/lavajato/master/lista_lavajato.json';
+    var url =
+        'https://raw.githubusercontent.com/HackersAtivistas/lavajato/master/lista_lavajato.json';
     var httpClient = new HttpClient();
 
     List<dynamic> resultData;
@@ -38,8 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
         var jsonString = await response.transform(utf8.decoder).join();
         resultData = json.decode(jsonString);
       }
-    } catch (exception) {
-    }
+    } catch (exception) {}
 
     // If the widget was removed from the tree while the message was in flight,
     // we want to discard the reply rather than calling setState to update our
@@ -50,16 +70,19 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  List<Column> buildCards (List<dynamic> arr) {
+  List<Column> buildCards(List<dynamic> arr) {
     List<Column> out = arr.map((el) {
       return new Column(
-          children: <Widget>[
-              new Image.network(el['foto']),
-              new Text(el['nome']),
-            ],
-          );
-        }
-      ).toList();
+        children: <Widget>[
+          new Image.network(el['foto']),
+          new Text(el['nome']),
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pushNamed('/details'),
+            child: Text('Ver Mais'),
+          )
+        ],
+      );
+    }).toList();
     return out;
   }
 
@@ -67,9 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     _loadPoliticians();
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Lava Jato')
-      ),
+      appBar: new AppBar(title: new Text('Lava Jato')),
       body: new Center(
         child: new GridView.count(
             childAspectRatio: .4,
@@ -78,9 +99,8 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisSpacing: 10.0,
             // mainAxisSpacing: 40.0,
             crossAxisCount: 3,
-            children: buildCards(this.results)
-          ),
-        ),
-      );
+            children: buildCards(this.results)),
+      ),
+    );
   }
 }
