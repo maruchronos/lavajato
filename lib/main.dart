@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'details.dart';
 
 void main() {
   runApp(new MyApp());
@@ -13,32 +14,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(routes: <String, WidgetBuilder>{
       '/': (BuildContext context) => MyHomePage(),
       '/home': (BuildContext context) => MyHomePage(),
-      '/details': (BuildContext context) => DetailsPage()
+      '/details': (BuildContext context) => DetailsPage(MyHomePage.selected)
     });
   }
 }
 
-class DetailsPage extends StatefulWidget {
-  DetailsPage({Key key}) : super(key: key);
-
-  @override
-  _DetailsPageState createState() => new _DetailsPageState();
-}
-
-class _DetailsPageState extends State<DetailsPage> {
-    @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(title: Text('Detalhes')),
-        body: Center(
-          child: Text('Detalhes')
-        ),
-      );
-    }
-}
-
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
+  static dynamic selected;
 
   @override
   _MyHomePageState createState() => new _MyHomePageState();
@@ -79,7 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
           new Image.network(el['foto']),
           new Text(el['nome']),
           new FlatButton(
-            onPressed: () => Navigator.of(context).pushNamed('/details'),
+            onPressed: () => { 
+              MyHomePage.selected = el :
+              Navigator.of(context).pushNamed('/details')
+              },
             child: Text('Ver Mais'),
           )
         ],
