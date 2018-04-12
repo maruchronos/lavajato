@@ -27,7 +27,8 @@ class _MyHomePageState extends State<MyHomePage> {
   var results = [];
 
   _getIPAddress() async {
-    var url = 'https://raw.githubusercontent.com/HackersAtivistas/lavajato/master/lista_lavajato.json';
+    var url =
+        'https://raw.githubusercontent.com/HackersAtivistas/lavajato/master/lista_lavajato.json';
     var httpClient = new HttpClient();
 
     List<dynamic> resultData;
@@ -38,28 +39,27 @@ class _MyHomePageState extends State<MyHomePage> {
         var jsonString = await response.transform(utf8.decoder).join();
         resultData = json.decode(jsonString);
       }
-    } catch (exception) {
-    }
+    } catch (exception) {}
 
     // If the widget was removed from the tree while the message was in flight,
     // we want to discard the reply rather than calling setState to update our
     // non-existent appearance.
     if (!mounted) return;
+    if (resultData == null) return;
     setState(() {
       results = resultData;
     });
   }
 
-  List<Column> buildCards (List<dynamic> arr) {
+  List<Column> buildCards(List<dynamic> arr) {
     List<Column> out = arr.map((el) {
       return new Column(
-          children: <Widget>[
-              new Image.network(el['foto']),
-              new Text(el['nome']),
-            ],
-          );
-        }
-      ).toList();
+        children: <Widget>[
+          new Image.network(el['foto']),
+          new Text(el['nome']),
+        ],
+      );
+    }).toList();
     return out;
   }
 
@@ -67,20 +67,17 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     _getIPAddress();
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Lava Jato')
-      ),
+      appBar: new AppBar(title: new Text('Lava Jato')),
       body: new Center(
         child: new GridView.count(
             childAspectRatio: .6,
             primary: false,
-            padding: new EdgeInsets.all(8.0),
+            padding: new EdgeInsets.all(2.0),
             crossAxisSpacing: 10.0,
             // mainAxisSpacing: 40.0,
             crossAxisCount: 3,
-            children: buildCards(this.results)
-          ),
-        ),
-      );
+            children: buildCards(this.results)),
+      ),
+    );
   }
 }
