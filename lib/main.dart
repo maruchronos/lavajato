@@ -65,6 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // we want to discard the reply rather than calling setState to update our
     // non-existent appearance.
     if (!mounted) return;
+    if (resultData == null) return;
     setState(() {
       results = resultData;
     });
@@ -95,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: new GridView.count(
             childAspectRatio: .4,
             primary: false,
-            padding: new EdgeInsets.all(8.0),
+            padding: new EdgeInsets.all(2.0),
             crossAxisSpacing: 10.0,
             // mainAxisSpacing: 40.0,
             crossAxisCount: 3,
