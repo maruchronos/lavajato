@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'details.dart';
 
 void main() {
   runApp(new MyApp());
@@ -10,14 +11,17 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new MyHomePage(),
-    );
+    return MaterialApp(routes: <String, WidgetBuilder>{
+      '/': (BuildContext context) => MyHomePage(),
+      '/home': (BuildContext context) => MyHomePage(),
+      '/details': (BuildContext context) => DetailsPage(MyHomePage.selected)
+    });
   }
 }
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
+  static dynamic selected;
 
   @override
   _MyHomePageState createState() => new _MyHomePageState();
@@ -57,6 +61,13 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           new Image.network(el['foto']),
           new Text(el['nome']),
+          new FlatButton(
+            onPressed: () => { 
+              MyHomePage.selected = el :
+              Navigator.of(context).pushNamed('/details')
+              },
+            child: Text('Ver Mais'),
+          )
         ],
       );
     }).toList();
