@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'details.dart';
+import 'package:flutter_search_bar/flutter_search_bar.dart';
 
 void main() {
   runApp(new MyApp());
@@ -28,7 +29,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  SearchBar searchBar;
+  String filter = '';
   var results = [];
+  var filtred = [];
+
+  AppBar buildAppBar(BuildContext context) {
+    return new AppBar(
+        title: new Text('My Home Page'),
+        actions: [searchBar.getSearchAction(context)]);
+  }
+
+  _MyHomePageState() {
+    searchBar = new SearchBar(
+        inBar: true,
+        setState: setState,
+        closeOnSubmit: false,
+        clearOnSubmit: false,
+        onSubmitted: search,
+        buildDefaultAppBar: buildAppBar);
+  }
 
   _loadPoliticians() async {
     var url =
@@ -52,6 +72,12 @@ class _MyHomePageState extends State<MyHomePage> {
     if (resultData == null) return;
     setState(() {
       results = resultData;
+      filtred = resultData
+          .where((e) => e['nome']
+              .toString()
+              .toLowerCase()
+              .contains(this.filter.toString().toLowerCase()))
+          .toList();
     });
   }
 
@@ -62,10 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
           new Image.network(el['foto']),
           new Text(el['nome']),
           new FlatButton(
-            onPressed: () => { 
-              MyHomePage.selected = el :
-              Navigator.of(context).pushNamed('/details')
-              },
+            onPressed: () => {
+                  MyHomePage.selected = el:
+                      Navigator.of(context).pushNamed('/details')
+                },
             child: Text('Ver Mais'),
           )
         ],
@@ -74,11 +100,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return out;
   }
 
+  search(filter) {
+    setState(() {
+      this.filter = filter;
+      filtred = results
+          .where((e) => e['nome']
+              .toString()
+              .toLowerCase()
+              .contains(filter.toString().toLowerCase()))
+          .toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     _loadPoliticians();
     return new Scaffold(
-      appBar: new AppBar(title: new Text('Lava Jato')),
+      appBar: searchBar.build(context),
       body: new Center(
         child: new GridView.count(
             childAspectRatio: .4,
@@ -87,7 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisSpacing: 10.0,
             // mainAxisSpacing: 40.0,
             crossAxisCount: 3,
-            children: buildCards(this.results)),
+            children: buildCards(this.filtred)),
       ),
     );
   }

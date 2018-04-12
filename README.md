@@ -9,6 +9,6 @@ Para os dados exibidos no projeto utilizamos a base disponível em: https://raw.
 TODO
 
 - [x] Página de detalhes
-- [ ] Buscar 
+- [x] Buscar por nome
 - [ ] Filtrar por estado
 - [ ] Filtrar por partido
