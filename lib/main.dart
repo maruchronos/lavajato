@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(routes: <String, WidgetBuilder>{
+      '/': (BuildContext context) => MyHomePage(),
       '/home': (BuildContext context) => MyHomePage(),
       '/details': (BuildContext context) => DetailsPage()
     });
